@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Scrollcat</title>
+    <style>
+      body {
+        background: #ddf4ff;
+        margin: 0;
+        font: 12pt helvetica, sans-serif;
+      }
+
+      img {
+        display: block;
+      }
+
+      h1 { text-align: center }
+
+      #banner { padding: .5em }
+      #cat { margin: 0 auto; width: 240px; }
+      #middle img {
+        opacity: 1;
+        height: 0;
+        width: 240px;
+        transition: height 0.5s;
+        -webkit-transition: height 0.5s
+      }
+      #middle img.show {
+        height: 110px;
+      }
+      .hidden { opacity: 0 }
+    </style>
+  </head>
+  <body>
+    <div id="banner">
+      Image slices courtesy of <a href="http://www.peak15.org/longcat">http://www.peak15.org/longcat</a>
+    </div>
+    
+    <h1>
+      Scrollcat is...
+    </h1>
+
+    <div id="cat">
+      <div id="head">
+        <img src="images/longcat-head.png" alt="longcat-head" />
+      </div>
+      <div id="middle">
+        <img src="images/longcat-middle.png" alt="longcat-middle" class="hidden" />
+      </div>
+      <div id="tail">
+        <img src="images/longcat-tail.png" alt="longcat-tail" />
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      var anim_duration = 500;
+      var section_height = 110;
+      var sections_added = 0;
+      var last_scroll_y = 0;
+
+      function add_section() {
+        sections_added += 1;
+
+        var section = document.createElement('img');
+        section.setAttribute('src', 'images/longcat-middle.png');
+        document.getElementById('middle').appendChild(section);
+        setTimeout(function() {
+          section.setAttribute('class', 'show');
+        }, 10);
+        return section;
+      }
+
+      function fill_middle() {
+        var viewport_height = window.innerHeight;
+        var doc_height = document.body.offsetHeight;
+
+        var sections = Math.ceil((viewport_height - doc_height) / section_height) + 1;
+
+        for(section = 0; section < sections; section++) {
+          setTimeout(add_section, (anim_duration * section));
+        }
+      }
+
+      window.onscroll = function(e) {
+        // if we approach the bottom of the page, minus the last section
+        if (window.innerHeight + window.scrollY > document.body.offsetHeight - 110) {
+          // add one section for every 110px (height of section)
+          if (window.scrollY > (last_scroll_y + 110)) {
+            // but only up to 50.
+            if (sections_added < 50) {
+              last_scroll_y = window.scrollY;
+              add_section();
+            } else {
+            }
+          }
+        }
+      }
+
+      setTimeout(function() {
+        fill_middle();
+      }, anim_duration);
+    </script>
+  </body>
+</html>
